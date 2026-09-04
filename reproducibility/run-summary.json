@@ -1,0 +1,72 @@
+{
+  "case": "silicon-exchange",
+  "run_date": "2026-09-02",
+  "pipeline": "CodeLead incremental build (/build-incremental driver)",
+  "model": {
+    "id": "qwen/qwen3.8-27b",
+    "parameters": "27B",
+    "quantization": "8-bit (MLX)",
+    "runtime": "LM Studio (MLX engine), single machine",
+    "observed_generation_speed_tokens_per_second_approx": 18
+  },
+  "timings": {
+    "started_at": "2026-09-02T05:12:16Z",
+    "ended_at": "2026-09-02T08:58:03Z",
+    "total_wall_clock_ms": 13547694,
+    "total_wall_clock_human": "3h 45m 48s",
+    "planning_and_coverage_phase_ms": 404591,
+    "build_session_ms": 13143103,
+    "build_session_human": "3h 39m 03s",
+    "note": "total = launch to exit, unattended; the build session excludes the initial planning + request-coverage phase"
+  },
+  "increments": {
+    "planned": 17,
+    "verified": 17,
+    "failed": 0,
+    "exit_reason": "all_increments_done",
+    "attempts_beyond_first": {
+      "inc-9": "2 attempts (first attempt produced no code change; retried and verified)",
+      "inc-17": "2 attempts (first attempt was a no-change polish pass recorded as evidence; second delivered and verified)"
+    }
+  },
+  "verification": {
+    "unit_tests_written_by_model": 53,
+    "unit_tests_passing": 53,
+    "test_files": 5,
+    "build": "green (tsc + vite build)",
+    "gates_per_increment": ["compile", "unit tests", "route acceptance probe", "cumulative regression probe"]
+  },
+  "commands": {
+    "total": 20,
+    "completed": 19,
+    "failed": 0,
+    "other": 1,
+    "note": "the one 'other' is the driver's own /exit"
+  },
+  "model_calls": {
+    "total": 38,
+    "preflight": 19,
+    "patch": 19,
+    "provider_or_transport_errors": 0,
+    "cut_by_pipeline_time_governor": 1,
+    "governor_note": "one patch call reached the 15-minute deliberation budget and was cut by CodeLead's own governor; the retry succeeded. No provider, network, or server errors occurred."
+  },
+  "post_run_governed_repairs": {
+    "count": 1,
+    "description": "a 404/not-found module also rendered on the home page; removed via one /implement pass through the same gates, checkpoint-committed in the receipts history",
+    "receipts_commit": "5adcf1d"
+  },
+  "development_run_honesty": {
+    "full_challenge_runs_total": 8,
+    "stopped_early_by_codeleads_own_gates": 5,
+    "completed_with_one_failed_increment": 1,
+    "completed_17_of_17": 2,
+    "note": "8 full-challenge runs during development across two quantizations; each early stop was caused by a defect our gates surfaced and produced a documented fix. The published run is the first run performed on its final configuration. The other 17/17 completion was the 4-bit quantization of the same model, one day earlier."
+  },
+  "hardware": {
+    "machine": "MacBook Pro (Mac17,6)",
+    "chip": "Apple M5 Max",
+    "memory_gb": 64,
+    "os": "macOS 26.6.2"
+  }
+}
