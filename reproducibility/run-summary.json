@@ -34,7 +34,7 @@
     "unit_tests_passing": 53,
     "test_files": 5,
     "build": "green (tsc + vite build)",
-    "gates_per_increment": ["compile", "unit tests", "route acceptance probe", "cumulative regression probe"]
+    "gates_per_increment": ["compile", "unit tests", "browser check of the increment surface", "re-check of everything verified earlier"]
   },
   "commands": {
     "total": 20,

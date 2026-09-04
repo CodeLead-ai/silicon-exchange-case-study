@@ -5,9 +5,9 @@ and response bodies are withheld; every event name, gate outcome, timestamp and 
 below is as recorded. Commits link into the receipts repository.
 
 Gate keys: **build** = tsc + vite build · **tests** = full unit-test suite · **probe** =
-headless-browser acceptance probe on the increment's own route · **regression** =
-cumulative probe over all previously verified increments. Multiple values (e.g.
-`failed/passed`) show attempt 1 then attempt 2.
+the increment's own surface exercised in a real browser · **regression** = everything
+verified before it, re-checked. Multiple values (e.g. `failed/passed`) show attempt 1 then
+attempt 2.
 
 | # | Increment | Attempts | Build | Tests | Probe | Regression | Committed | Receipts commit |
 |---|---|---|---|---|---|---|---|---|

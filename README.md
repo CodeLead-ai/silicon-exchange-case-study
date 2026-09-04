@@ -66,16 +66,16 @@ Six steps, each recorded in the receipts:
 
 1. **Increment plan.** One planning call decomposed the request into 17 dependency-ordered
    increments — pure-logic rules (with tests) before the pages that consume them.
-2. **Coverage gate.** A reviewer checked request → plan coverage and injected acceptance
-   criteria for anything the plan missed, before a minute was spent building.
+2. **Plan review.** Before any building started, the plan was checked against the request,
+   so that stated requirements could not be silently dropped.
 3. **Project scaffold.** The empty runnable shell — the equivalent of a project template,
    with its styling baseline and test setup — is produced by the pipeline itself, with no
    model calls involved.
 4. **Per-increment build.** For each increment: preflight analysis → patch proposal →
    safety/compliance check gate → apply. The model never edits files directly.
-5. **Machine verification.** Compile gate, full unit-test gate, a headless-browser
-   acceptance probe on the increment's own route, and a cumulative regression probe over
-   everything built before.
+5. **Machine verification.** Every increment had to compile, pass the full test suite, and
+   be observed working in a real browser — including a check that nothing built earlier
+   had stopped working.
 6. **Evidence ledger.** Each verified increment is git-checkpointed with its evidence; the
    ledger of what exists (and what failed) grounds every later step. Failures revert
    cleanly and never poison the build.
