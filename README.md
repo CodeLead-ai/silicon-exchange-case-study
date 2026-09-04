@@ -68,9 +68,9 @@ Six steps, each recorded in the receipts:
    increments — pure-logic rules (with tests) before the pages that consume them.
 2. **Coverage gate.** A reviewer checked request → plan coverage and injected acceptance
    criteria for anything the plan missed, before a minute was spent building.
-3. **Deterministic skeleton.** A runnable, routed, design-system-complete app shell
-   scaffolded with zero model calls — dark tokens, page chrome, component primitives, test
-   harness.
+3. **Project scaffold.** The empty runnable shell — the equivalent of a project template,
+   with its styling baseline and test setup — is produced by the pipeline itself, with no
+   model calls involved.
 4. **Per-increment build.** For each increment: preflight analysis → patch proposal →
    safety/compliance check gate → apply. The model never edits files directly.
 5. **Machine verification.** Compile gate, full unit-test gate, a headless-browser
