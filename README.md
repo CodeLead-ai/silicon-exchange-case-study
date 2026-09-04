@@ -119,8 +119,9 @@ OpenAI-compatible servers such as Ollama). An installable beta is coming.
 
 ## Get the beta
 
-**Watch this repository and say hello in [Discussions](../../discussions) — the beta
-announcement and waitlist will land there first.**
+**[Join the waitlist →](https://tally.so/r/VL6KYE)** — email only; organization and
+hardware questions optional. The announcement will also land in
+[Discussions](../../discussions).
 
 ---
 
