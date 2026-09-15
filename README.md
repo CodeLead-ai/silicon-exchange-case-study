@@ -236,13 +236,16 @@ If you rerun it — on any hardware, with any model — we'd genuinely like to s
 
 CodeLead is a local-first governance layer that turns AI coding agents into a governed
 engineering workflow: work is planned, scoped, executed one approved change at a time,
-machine-verified, and recorded as evidence. It works with local models via LM Studio (and
-OpenAI-compatible servers such as Ollama). An installable beta is coming.
+machine-verified, and recorded as evidence. It runs local models by default via LM Studio
+(and OpenAI-compatible servers such as Ollama); remote models are available when you
+choose them, and then the code goes to that provider. An installable beta is coming.
+The full write-up of this case study, with the limits spelled out, is at
+[codelead.dev/case-study](https://codelead.dev/case-study).
 
 ## Get the beta
 
-**[Join the waitlist →](https://tally.so/r/VL6KYE)** — email only; organization and
-hardware questions optional. The announcement will also land in
+**[Request early access →](https://codelead.dev/product#early-access)** — email only;
+organization and hardware questions optional. The announcement will also land in
 [Discussions](../../discussions).
 
 ---
