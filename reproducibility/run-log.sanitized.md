@@ -1,43 +1,34 @@
-# Run log — increment by increment (sanitized)
+# Run log — stage by stage (sanitized)
 
-Derived from the run's console and session logs. Per the repository's IP posture, prompt
-and response bodies are withheld; every event name, gate outcome, timestamp and commit
-below is as recorded. Commits link into the receipts repository.
+Derived from the run's console log and journal (2026-09-14, `qwen/qwen3.8-27b` 8-bit, one
+Mac laptop). Per the repository's IP posture, prompt and response bodies are withheld; every
+stage, gate outcome, timestamp and commit below is as recorded. Commits link into the
+receipts repository, **CodeLead-ai/silicon-exchange-app**.
 
-Gate keys: **build** = tsc + vite build · **tests** = full unit-test suite · **probe** =
-the increment's own surface exercised in a real browser · **regression** = everything
-verified before it, re-checked. Multiple values (e.g. `failed/passed`) show attempt 1 then
-attempt 2.
+Gate keys: **build** = tsc + vite build · **tests** = full unit-test suite · **browser** =
+the planned capabilities exercised in a real browser · **rules** = every business rule in
+the request checked independently of the model's own tests.
 
-| # | Increment | Attempts | Build | Tests | Probe | Regression | Committed | Receipts commit |
-|---|---|---|---|---|---|---|---|---|
-| 1 | App shell | 1 | passed | — | skipped: | — | 05:19:08 UTC | [`e9726a3`](https://github.com/CodeLead-ai/silicon-exchange/commit/e9726a3) |
-| 2 | Typed mock data | 1 | passed | passed | unavailable*: | passed | 05:31:35 UTC | [`981538f`](https://github.com/CodeLead-ai/silicon-exchange/commit/981538f) |
-| 3 | Overlap detection | 1 | passed | passed | unavailable*: | passed | 05:41:56 UTC | [`2368389`](https://github.com/CodeLead-ai/silicon-exchange/commit/2368389) |
-| 4 | Pricing math | 1 | passed | passed | skipped: | passed | 05:54:42 UTC | [`297f3f0`](https://github.com/CodeLead-ai/silicon-exchange/commit/297f3f0) |
-| 5 | Hold expiry | 1 | passed | passed | skipped: | passed | 06:04:23 UTC | [`31a79af`](https://github.com/CodeLead-ai/silicon-exchange/commit/31a79af) |
-| 6 | Maintenance blocking | 1 | passed | passed | skipped: | passed | 06:11:35 UTC | [`ac36048`](https://github.com/CodeLead-ai/silicon-exchange/commit/ac36048) |
-| 7 | Filter and sort logic | 1 | passed | passed | skipped: | passed | 06:22:43 UTC | [`d8d4011`](https://github.com/CodeLead-ai/silicon-exchange/commit/d8d4011) |
-| 8 | Shared state and persistence | 1 | passed | passed | unavailable*: | passed | 06:33:58 UTC | [`8496951`](https://github.com/CodeLead-ai/silicon-exchange/commit/8496951) |
-| 9 | Home page | 2 | failed/passed | passed | unavailable*: | passed | 06:47:46 UTC | [`3458b5e`](https://github.com/CodeLead-ai/silicon-exchange/commit/3458b5e) |
-| 10 | Browse page | 1 | passed | passed | unavailable*: | passed | 07:00:43 UTC | [`b10edab`](https://github.com/CodeLead-ai/silicon-exchange/commit/b10edab) |
-| 11 | Spec sheet and utilization chart | 1 | passed | passed | passed | passed | 07:14:34 UTC | [`7dcdc58`](https://github.com/CodeLead-ai/silicon-exchange/commit/7dcdc58) |
-| 12 | Availability calendar | 1 | passed | passed | unavailable*: | passed | 07:27:06 UTC | [`a536d62`](https://github.com/CodeLead-ai/silicon-exchange/commit/a536d62) |
-| 13 | Reservation form with live pricing | 1 | passed | passed | unavailable*: | passed | 07:40:03 UTC | [`fd67614`](https://github.com/CodeLead-ai/silicon-exchange/commit/fd67614) |
-| 14 | Dashboard | 1 | passed | passed | unavailable*: | passed | 07:53:50 UTC | [`5d1a895`](https://github.com/CodeLead-ai/silicon-exchange/commit/5d1a895) |
-| 15 | Compare page | 1 | passed | passed | passed | passed | 08:08:17 UTC | [`83bc313`](https://github.com/CodeLead-ai/silicon-exchange/commit/83bc313) |
-| 16 | Not-found page | 1 | passed | passed | unavailable*: | passed | 08:16:46 UTC | [`232c3f1`](https://github.com/CodeLead-ai/silicon-exchange/commit/232c3f1) |
-| 17 | Polish | 4 | passed/failed/passed | passed/passed | skipped: | passed | 08:58:03 UTC | [`d657d7d`](https://github.com/CodeLead-ai/silicon-exchange/commit/d657d7d), [`570fae2`](https://github.com/CodeLead-ai/silicon-exchange/commit/570fae2) |
+| Stage | Started (UTC) | Duration | Build | Tests | Browser | Rules | Receipts commit |
+|---|---|---|---|---|---|---|---|
+| Planning: 18 increments, reviewed against the request (6 criteria added) | 06:33:10 | 17m 28s | — | — | — | — | — |
+| 1 · Runnable app shell (no model call) | 06:50:38 | 9 s | passed | — | — | — | `increment inc-1` |
+| 2 · Whole application — all 18 planned increments, built and committed | 06:50:47 | 52m 38s | passed | 40/40 | — | — | `increment build-all` |
+| 3 · Verification — capabilities in the browser, rules against the request | 07:43:25 | ~23m | — | — | 8 observed, 1 not observed, 8 not observable | **1 failure**: pricing discount on a partial hour past 24 h | — |
+| 4 · Governed fix — pricing rule and its tests, scoped to the pricing module | 08:06:28 | 10m 29s | passed | 40/40 | — | re-checked | `increment rule-pricing` |
+| 5 · Visual polish and responsiveness | 08:16:57 | 22m 47s | passed | 40/40 | passed | — | `increment inc-18` |
+| 6 · Final verification | 08:39:44 | ~20m | passed | 40/40 | — | 26/26 by hand; the earlier failure gone | — |
+| Exit `all_increments_done` | 08:59:47 | **2h 26m 37s total** | | | | | |
 
-\* `unavailable` means the probe could not perform a meaningful interaction on that
-surface (for example, a pure-logic increment renders nothing to probe). An unavailable
-probe never counts as a pass — verification then rests on the build, test and regression
-gates, which is recorded as such in the ledger.
+"Not observable" means the browser check could not perform a meaningful interaction on
+that capability (for example a pure-logic module renders nothing to click). An unobservable
+check never counts as a pass; verification then rests on the build, tests and rules gates,
+which is recorded as such.
 
-**Post-run governed repair (included in the receipts):** a 404/not-found module was also
-rendered on the home page; one `/implement` pass through the same gates removed that
-render (the catch-all 404 route was untouched) — [`5adcf1d`](https://github.com/CodeLead-ai/silicon-exchange/commit/5adcf1d).
+**The one failure, in full:** a reservation of 24 hours and 1 minute rounds up to 24 hours
+15 minutes; the 10% discount applies to the 15-minute excess only. Expected 24,225 cents at
+a 1,000 c/h rate; the first build returned 24,250 (it had discounted a whole hour). The fix
+stage rewrote the discount to apply to the excess quarter-hours, brought the model's own
+tests to the request's numbers, and passed build, tests and the re-check.
 
-**Evidence files in the receipts repo:** `.codeleadsessions/increment-ledger.json` (the
-per-increment evidence ledger) and per-session `summary.json`. Model I/O transcripts are
-withheld (see FAQ, "What is patented?").
+**No post-run repairs.** The application is published exactly as the pipeline left it.

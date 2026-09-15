@@ -1,7 +1,8 @@
 # Model, runtime, and hardware
 
-Everything below is what the published run (2026-09-02) actually used. If a setting is not
-listed, it was the runtime's default.
+Everything below is what the published run (2026-09-14) actually used. If a setting is not
+listed, it was the runtime's default. The 2026-09-02 run used the same model, machine and
+serving settings.
 
 ## Model
 
@@ -16,10 +17,9 @@ listed, it was the runtime's default.
 
 | | |
 |---|---|
-| Server | LM Studio, MLX engine (CLI commit `07b7252`), OpenAI-compatible endpoint on `localhost:1234` |
-| Load settings | single model loaded, `--parallel 1` |
-| Served context length | 131,072 tokens (as reported by the server for this load; the pipeline keeps its own prompts far below this) |
-| Reasoning effort | `medium` for the planning and analysis calls (a standard endpoint parameter) |
+| Server | LM Studio, MLX engine, OpenAI-compatible endpoint on `localhost:1234` |
+| Load settings | single model loaded, `--parallel 1`, context length 131,072 |
+| Reasoning effort | `medium` for the planning and review calls, `low` for the build (standard endpoint parameters, set per call by the pipeline; the server's own per-model default is never relied on) |
 | Concurrency | the model server was used exclusively by this run |
 
 ## Hardware
@@ -35,11 +35,11 @@ listed, it was the runtime's default.
 ## Reproduction notes
 
 - Any machine that can serve this model at 8-bit (≈28 GB of weights plus headroom) is in
-  range. The 4-bit variant (≈16 GB) completed 17/17 in a development run one day earlier,
-  on the same machine.
-- Smaller models degrade honestly rather than fail silently: a 4B model on a mid-range
-  Windows desktop completed 4/14 increments with every failure recorded — see the FAQ's
-  "why not a frontier model" answer for the model-size ladder.
+  range.
+- Smaller models degrade honestly rather than fail silently — see
+  [`other-models.md`](other-models.md).
+- The control arms (the same model with the pipeline removed) and their exact settings are
+  in [`control-arms.md`](control-arms.md).
 - The driver, gates and evidence pipeline are part of the CodeLead beta (coming);
   reproduction today means running your own agent against the published prompt and
   comparing against the receipts, or waiting for the beta's one-command rerun.
