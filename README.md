@@ -1,31 +1,41 @@
 # A 27B model on one Mac built what a 2.8-trillion-parameter model needed four.
 
-Same public challenge prompt. A complete, tested, six-route web product — planned, built,
+Same public challenge prompt. A complete, tested, five-route web product — planned, built,
 verified and committed end-to-end by **CodeLead** orchestrating a small local model. No
-human touched the code. In under two and a half hours, on a laptop.
+human touched the code. In under two hours, on a laptop.
 
-**The receipts:** the application, exactly as the pipeline produced it, with full git
-history — the shell, the build, one governed fix, the polish:
+**The receipts:** an application exactly as the pipeline produced it from this prompt, with
+full git history, from the run of 2026-09-14:
 **[CodeLead-ai/silicon-exchange-app](https://github.com/CodeLead-ai/silicon-exchange-app)**.
 How to reproduce it, step by step: **[reproducibility/](reproducibility/)**.
 
+The figures below are from the latest run, **2026-09-29**, same model and laptop, served by
+TensorFold with speculative decoding. The run's own artifacts (run journal, console and serving logs, the session log, the oracle results) are being prepared for publication and will be added to `reproducibility/` soon; until then, [`reproducibility/run-2026-09-29.md`](reproducibility/run-2026-09-29.md) holds every figure with the artifact it was measured from.
+
 | | |
 |---|---|
-| Wall clock, unattended, launch to exit | **2h 26m 37s** (2h 09m of build after a 17m 28s planning phase) |
-| Increments verified | **18 / 18** — every one gate-checked |
-| Unit tests, written by the model, passing | **40 / 40** |
-| Business-rule checks, independent of the model's tests | **26 / 26** — including the one its first attempt got wrong |
-| Provider / transport model errors | **0** — zero retries, zero warnings |
+| Wall clock, unattended, launch to exit | **1h 46m 05s** (1h 42m of build after a 4m 14s planning phase) |
+| Increments verified | **17 / 17** — every one built, tested, probed and checkpointed |
+| Unit tests, written by the model, passing | **39 / 39** (five test files) |
+| Business-rule oracle cases, independent of the model's tests | **30 / 30** |
+| Retries inside the run | **5**, across four increments (two build failures, one test failure, one probe failure, one more build failure) — every one repaired in the run, none by a person; **0** failed |
+| Model calls · tokens · cost | 48 · 758,514 prompt + 257,486 completion · **$0.00** (local) |
 
-All values come from [`reproducibility/run-summary.json`](reproducibility/run-summary.json),
-derived from the run's own logs.
+Three runs of this challenge have been published or are about to be, and the numbers moved
+with the pipeline and the serving, not the model:
+
+| Run | Serving | Wall clock | Increments | Tests | Rule checks | Receipts |
+|---|---|---|---|---|---|---|
+| 2026-09-02 | LM Studio | 3h 46m | 17 / 17 | 53 / 53 | — | [silicon-exchange](https://github.com/CodeLead-ai/silicon-exchange) |
+| 2026-09-14 | LM Studio | 2h 27m | 18 / 18 | 40 / 40 | 26 / 26 | [silicon-exchange-app](https://github.com/CodeLead-ai/silicon-exchange-app) |
+| **2026-09-29** | **TensorFold, speculative decoding** | **1h 46m** | **17 / 17** | **39 / 39** | **30 / 30** | artifacts to be published |
 
 ## The challenge
 
 "Silicon Exchange" is a GPU-rental marketplace from a public benchmark prompt featured in
 Alex Ziskind's video
 [*"I Gave Local AI and the Cloud the Exact Same Job"*](https://www.youtube.com/watch?v=ujs0_cpAnaw):
-six routes; five business-rule sets that must be pure, tested functions (half-open overlap
+five routes; five business-rule sets that must be pure, tested functions (half-open overlap
 detection, 15-minute round-up pricing with an excess-hours discount, hold expiry,
 maintenance blocking, combined filter/sort); URL-persisted filters; localStorage
 reservations; a dark "trading terminal" design language; and a quality bar of
@@ -42,33 +52,39 @@ adapted prompt is published verbatim in
 |---|---|---|---|---|
 | Kimi K3, local *(from the video)* | 2.8T params (817 GB served) | 4× Mac Studio, 2 TB unified, ≈$64k · 14.7 tok/s | 4 hours | Completed |
 | Abacus Supercomputer *(from the video, sponsored)* | Opus 5 high + GPT 5.6 Soul (frontier cloud) | Always-on cloud VM | 15 min | Completed, strongest visuals |
-| **CodeLead + local model** | **qwen3.8 27B @ 8-bit** | **One Mac laptop** (LM Studio) | **2h 27m** | **Completed — every claim machine-verified** |
+| **CodeLead + local model** | **qwen3.8 27B @ 8-bit** | **One Mac laptop** (TensorFold, speculative decoding) | **1h 46m** | **Completed — every claim machine-verified** |
 
 The first two rows are figures as stated in the video. Our model is roughly 100× smaller
-than the local reference — and generated faster on one machine (≈18 vs 14.7 tokens/second)
-than the 2.8T model did on four. Our first published run of this challenge, on 2026-09-02,
-took 3h 46m; the run above is the current pipeline one week later, same model, same laptop.
+than the local reference, and with speculative decoding it decoded at about 59 tokens/second
+on one machine (median 55, range 45–100 across the run's 52 requests) against the 2.8T
+model's 14.7 on four. The same model served by LM Studio, without a drafter, ran at about 18
+tokens/second in the 2026-09-14 run.
 
 ## How CodeLead built it
 
-Six steps, each recorded in the receipts:
+Six steps, each recorded in the run's artifacts (the 2026-09-29 run):
 
-1. **Increment plan.** One planning call decomposed the request into 18 dependency-ordered
-   increments — pure-logic rules (with tests) before the pages that consume them.
-2. **Plan review.** Before any building started, the plan was checked against the request,
-   so that stated requirements could not be silently dropped; six were added.
-3. **Project scaffold.** The empty runnable shell — the equivalent of a project template,
-   with its styling baseline and test setup — is produced by the pipeline itself, with no
-   model calls involved.
-4. **Governed build.** The model builds inside a bounded, monitored workspace — write,
-   build, test, fix — and CodeLead judges the result at every boundary. The model never
-   edits files without the harness seeing it.
-5. **Independent verification.** Every planned capability was exercised in a real browser,
-   and every business rule in the request was checked independently of the model's own
-   tests. What failed became a scoped fix, verified again.
-6. **Evidence ledger.** Each verified stage is git-checkpointed with its evidence; the
-   ledger of what exists (and what failed) grounds every later step. Failures revert
-   cleanly and never poison the build.
+1. **Increment plan.** One planning call decomposed the request into 17 dependency-ordered
+   increments — pure-logic rules (with tests) before the pages that consume them. 1m 46s.
+2. **Plan review.** Before any building started, a coverage review and a plan critic checked
+   the plan against the request, so that stated requirements could not be silently dropped;
+   six were added. 2m 28s.
+3. **Governed build.** The model builds one increment at a time inside a bounded, monitored
+   workspace, and CodeLead judges the result at every boundary. The model never edits files
+   without the harness seeing it.
+4. **A gate on every increment.** Each increment had to build, pass its tests and pass an
+   acceptance probe in a real browser before it was checkpointed. Of 18 probe criteria, 11
+   were readable by a browser; 6 passed, 1 failed and was repaired.
+5. **Repair inside the run.** A failed gate sent the failure back to the model: 22 attempts
+   for 17 increments, five retries, none by a person. Nothing was repaired after the run.
+6. **Independent check, and the evidence ledger.** After the run, the request's business
+   rules were checked against the built application by a 30-case oracle written from the
+   specification, not by the model: 30 of 30. Each verified increment is checkpointed with
+   its evidence; failures revert cleanly and never poison the build.
+
+The earlier published run (2026-09-14, receipts above) ran the same loop with the checks
+after the build instead of inside each increment, and one scoped fix at the end; its
+stage-by-stage log is [`reproducibility/run-log.sanitized.md`](reproducibility/run-log.sanitized.md).
 
 The invariant: nothing was marked done that wasn't machine-checked.
 
@@ -80,6 +96,9 @@ The invariant: nothing was marked done that wasn't machine-checked.
 | Home — live fleet stats computed from the data layer | Browse — search, filters and sort persisted in the URL |
 | ![Listing detail](assets/screenshots/listing.png) | ![Dashboard](assets/screenshots/dashboard.png) |
 | Listing detail — spec sheet, utilization chart, availability, live-priced reservation | Dashboard — reservations from localStorage with countdowns and running spend |
+
+Screenshots are of the 2026-09-14 application in the receipts repository; the 2026-09-29
+run was not captured. They will be replaced when that run's artifacts are published.
 
 ## Not tuned to this prompt
 
@@ -117,7 +136,7 @@ and every finished app was also reviewed by hand. Details in
 | Kimi K2.7 Code (`moonshotai/kimi-k2.7-code`, remote via OpenRouter) | MoE, total not published | Cloud, $1.10 | **Complete, every claim verified, 1h 11m.** All 8 slices, 21 tests, every runnable rule check right. Reviewed by hand as very good and on a par with DeepSeek: a better reservation layout, other parts implemented better by DeepSeek. A first run lost two slices to the model's own tool-call syntax, now read by the build loop. |
 | GLM 5.3 (`z-ai/glm-5.3`, remote via OpenRouter) | large MoE, total not published | Cloud, $3.29 | **All 11 increments verified in 35 minutes**, 70 tests, 62 of 62 static items, 29 of 29 rule checks right — and reviewed by hand as a bad interface: wrong colours, a single-column browse page, and the reserve flow is not usable. The most complete build and one of the least usable. |
 | gpt-oss 120B (`openai/gpt-oss-120b`, remote via OpenRouter) | 117B MoE, 5.1B active | Cloud, $0.08 | 8 of 9 slices in 28 minutes for eight cents; 11 tests, only 5 listings, whole-hour pricing (3 rule checks wrong). Reviewed by hand as the weakest of the batch; its one flourish was emojis on the home page. |
-| **Qwen3.8 27B** (`qwen/qwen3.8-27b`, 8-bit) | 27B dense | One Mac laptop | **Complete, every claim verified, 2h 27m** — the run this page is about. |
+| **Qwen3.8 27B** (`qwen/qwen3.8-27b`, 8-bit) | 27B dense | One Mac laptop | **Complete, every claim verified: 1h 46m on TensorFold (2026-09-29), 2h 27m on LM Studio (2026-09-14)** — the runs this page is about. |
 
 **Size, cost and result did not line up.** The two remote models that completed the whole
 product were not the two that produced the best apps: GLM 5.3 verified everything and was the
@@ -138,8 +157,10 @@ made on earlier versions of the pipeline and are reported as run.
   unattended.
 - **Run count, honestly.** The first published run (3h 46m, 17/17) was made on 2026-09-02.
   In the following week we ran the challenge about twenty more times while changing one
-  thing at a time in the pipeline, scoring every run the same way. The run shown here is
-  the first performed on the current configuration, not the best of many.
+  thing at a time in the pipeline, scoring every run the same way, and published the run of
+  2026-09-14 with its receipts. The run the page now leads with, 2026-09-29, is the most
+  recent on the current configuration, with the model served by TensorFold instead of LM
+  Studio; its artifacts are being prepared for publication.
 - **One declared adaptation.** Next.js → Vite + React + TypeScript; the adapted prompt is
   published.
 - **Interface quality is a human judgment**, not a metric. Ours was reviewed by hand; the
@@ -201,17 +222,20 @@ does not finish on a 27B.
 from the same misunderstanding, tests passing proves nothing, and nothing in the loop can
 tell you. In CodeLead, finished means checked: every business rule in the request is
 verified independently of the model's own tests, in the browser and in the test runner. In
-the run above, that check caught the same pricing defect in CodeLead's own build, scheduled
-a scoped fix, and confirmed it — ten minutes, nobody reading the code. That difference, not
-speed and not looks, is the case study.
+the 2026-09-14 run, that check caught the same pricing defect in CodeLead's own build,
+scheduled a scoped fix, and confirmed it — ten minutes, nobody reading the code. In the
+2026-09-29 run the rule check passed 30 of 30, and the failures the model did make on the
+way (two builds, a test, a browser probe, a build again) were caught at the gate and
+repaired before the increment could land. That difference, not speed and not looks, is the
+case study.
 
 ## Why this matters
 
 The video's question was whether local AI can do the job. Its answer was yes, with four
 machines, four hours, and a model you cannot buy the hardware for; or the cloud, in fifteen
 minutes, with your code leaving the building. Ours is a third answer: **one laptop, a model
-that fits on it, under two and a half hours — and every claim about the result checked by a
-machine, not by the model that made it.** Frontier-scale results don't require
+that fits on it, under two hours — and every claim about the result checked by a machine,
+not by the model that made it.** Frontier-scale results don't require
 frontier-scale hardware, and "it compiles and the tests pass" is not the same as "it charges
 the right amount". CodeLead's thesis — that a governed engineering workflow (planning,
 scoped execution, machine verification, evidence records) unlocks small local models —
@@ -222,8 +246,11 @@ underlying methods.
 ## Reproduce it
 
 - The exact prompt: [`reproducibility/challenge-prompt.md`](reproducibility/challenge-prompt.md)
-- Model, quantization, runtime and machine: [`reproducibility/model-and-hardware.md`](reproducibility/model-and-hardware.md)
-- The stage-by-stage timeline with gate outcomes and receipt commits:
+- Model, quantization, runtime and machine, for both servings:
+  [`reproducibility/model-and-hardware.md`](reproducibility/model-and-hardware.md)
+- The 2026-09-29 run, every figure with its source, and the list of artifacts to come:
+  [`reproducibility/run-2026-09-29.md`](reproducibility/run-2026-09-29.md)
+- The 2026-09-14 run's stage-by-stage timeline with gate outcomes and receipt commits:
   [`reproducibility/run-log.sanitized.md`](reproducibility/run-log.sanitized.md)
 - The first published run (2026-09-02, 3h 46m, 17/17, 53/53 tests) and its receipts:
   [`reproducibility/run-2026-09-02.md`](reproducibility/run-2026-09-02.md) and
@@ -237,7 +264,7 @@ If you rerun it — on any hardware, with any model — we'd genuinely like to s
 CodeLead is a local-first governance layer that turns AI coding agents into a governed
 engineering workflow: work is planned, scoped, executed one approved change at a time,
 machine-verified, and recorded as evidence. It runs local models by default via LM Studio
-(and OpenAI-compatible servers such as Ollama); remote models are available when you
+(and OpenAI-compatible servers such as Ollama and TensorFold); remote models are available when you
 choose them, and then the code goes to that provider. An installable beta is coming.
 The full write-up of this case study, with the limits spelled out, is at
 [codelead.dev/case-study](https://codelead.dev/case-study).
@@ -254,5 +281,6 @@ Reference comparison from Alex Ziskind, ["I Gave Local AI and the Cloud the Exac
 Job"](https://www.youtube.com/watch?v=ujs0_cpAnaw), a video sponsored by Abacus AI; Kimi K3
 ran unattended on the 4× Mac Studio cluster (Thunderbolt 5 mesh, MLX distributed) driven by
 opencode, and the Abacus Supercomputer agent ran with Opus 5 high + GPT 5.6 Soul selected —
-figures as stated in the video. CodeLead run: 2026-09-14, qwen3.8-27b (8-bit, MLX) via LM
-Studio on a single Mac laptop. Content license: CC BY 4.0. © 2026 CodeLead.
+figures as stated in the video. CodeLead runs: 2026-09-29, qwen3.8-27b (8-bit) served by
+TensorFold with speculative decoding, and 2026-09-14, the same model via LM Studio, each on a
+single Mac laptop. Content license: CC BY 4.0. © 2026 CodeLead.

@@ -4,7 +4,7 @@
 Yes, it did, and we say so in the comparison table. The claim is not speed. It is that a
 fixed-cost laptop, with no code leaving it, produced a fully machine-verified result
 unattended. If your constraint is privacy, cost predictability, or air-gapped
-infrastructure, the 15-minute cloud run is not an option — the 2h 27m local run is.
+infrastructure, the 15-minute cloud run is not an option — the 1h 46m local run is.
 
 **"Why did Kimi K3 take four hours on four Mac Studios?"**
 Our reading, not a measurement of their setup. The video states 238 tokens/second of prompt
@@ -24,8 +24,8 @@ on the same model, laptop and settings: opencode (the tool from the video) and o
 plain loop. The plain loop built a complete, good-looking marketplace in 75 minutes with 64
 passing tests — and the pricing rule wrong, with its own test asserting the wrong number.
 Nothing in the loop could know. That is why not raw: "finished" is the model's word for
-it. In CodeLead, finished means checked, and the same defect in CodeLead's own build was
-caught and fixed in ten minutes. Details: [`reproducibility/control-arms.md`](reproducibility/control-arms.md).
+it. In CodeLead, finished means checked: the same defect in CodeLead's own 2026-09-14 build
+was caught and fixed in ten minutes, and the 2026-09-29 build passed all 30 oracle cases. Details: [`reproducibility/control-arms.md`](reproducibility/control-arms.md).
 
 **"You ran opencode? That is what the video used."**
 Yes — opencode 1.18 against the same LM Studio endpoint, same model, same prompt. At the
@@ -39,16 +39,20 @@ report it as run; the settings are in the control-arms document.
 The first published run (2026-09-02, 3h 46m, 17/17) was the first run performed on its
 configuration at the time. In the following week we ran the challenge about twenty more
 times while changing one thing at a time in the pipeline — context handling, step size,
-build-then-verify, the independent rule check — scoring every run the same way. The run
-shown here is the first performed on the current configuration. Run-to-run wall clock on
-identical configurations varies by about ±20 minutes.
+build-then-verify, the independent rule check — scoring every run the same way, and published the
+run of 2026-09-14 with its receipts. The run the case study now leads with, 2026-09-29, is
+the most recent on the current configuration, with the model served by TensorFold; its
+artifacts are being prepared for publication. Run-to-run wall clock on identical
+configurations varied by about ±20 minutes on LM Studio.
 
-**"Why is this run faster than your first one?"**
-Because the pipeline changed, not the model. The first run made 38 model calls with a
-per-step analysis before each patch; the current one gives the model a bounded workspace to
-build in, verifies the whole product afterwards, and sends only what failed back as a
-scoped fix. Same model, same laptop, same serving; 3h 46m became 2h 27m with more
-verification, not less.
+**"Why is each run faster than the one before?"**
+From 3h 46m to 2h 27m, the pipeline changed, not the model: the first run made 38 model
+calls with a per-step analysis before each patch; the 2026-09-14 run gave the model a
+bounded workspace to build in, verified the whole product afterwards, and sent only what
+failed back as a scoped fix. Same model, same laptop, same serving, more verification. From
+2h 27m to 1h 46m, the serving changed: the same checkpoint served by TensorFold with
+speculative decoding decoded at about 59 tokens/second instead of 18, and the checks moved
+inside each increment.
 
 **"Did you tune CodeLead to this prompt?"**
 No, and we checked. The same morning we wrote two requests in unrelated domains — a team

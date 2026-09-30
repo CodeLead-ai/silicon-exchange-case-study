@@ -1,8 +1,23 @@
 # Model, runtime, and hardware
 
-Everything below is what the published run (2026-09-14) actually used. If a setting is not
-listed, it was the runtime's default. The 2026-09-02 run used the same model, machine and
-serving settings.
+Two servings of the same model on the same machine. The run the case study leads with
+(2026-09-29) used TensorFold; the run whose receipts are published (2026-09-14) and the
+2026-09-02 run used LM Studio. If a setting is not listed, it was the runtime's default.
+
+## The 2026-09-29 run: TensorFold with speculative decoding
+
+| | |
+|---|---|
+| Model | `Qwen3.8-27B-MLX-8bit`, the same checkpoint file as below |
+| Server | `tensorfold serve … --context 89600 --reasoning-effort medium` |
+| Speculative decoding | drafter `z-lab/Qwen3.8-27B-DFlash2` |
+| Observed decode rate | mean 59.3 tokens/second, median 55.5, range 45–100 across 52 requests (serve log) |
+| Machine | the same MacBook Pro as below |
+
+The serving configuration and serve log will be published with the run's artifacts; see
+[`run-2026-09-29.md`](run-2026-09-29.md).
+
+## The 2026-09-14 and 2026-09-02 runs: LM Studio
 
 ## Model
 

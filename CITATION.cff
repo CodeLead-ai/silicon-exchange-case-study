@@ -3,7 +3,7 @@ message: "If you reference this result, please cite it as below."
 title: "A 27B model on one Mac built what a 2.8-trillion-parameter model needed four"
 authors:
   - name: "CodeLead"
-date-released: "2026-09-15"
+date-released: "2026-09-30"
 url: "https://github.com/CodeLead-ai/silicon-exchange-case-study"
 license: CC-BY-4.0
 type: dataset
